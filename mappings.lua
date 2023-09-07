@@ -45,11 +45,10 @@ return {
     ["<leader>so"] = { ":ScratchOpen<cr>", desc = "Open list of scratches" },
     ["<leader>sc"] = { ":Scratch<cr>", desc = "Create new scratch" },
     ["<leader>sn"] = { ":ScratchWithName<cr>", desc = "Create new scratch with name" },
-    ["<leader>gm"] = { name = "Merge tools" },
-    ["<leader>gmo"] = { ":DiffviewOpen<cr>", desc = "Open diff view" },
-    ["<leader>gmc"] = { ":DiffviewClose<cr>", desc = "Close diff view" },
+    ["<leader>gm"] = { ":Gvdiffsplit!<cr>", name = "Open 3 way merge tools" },
     ["<leader>gl"] = {":Git blame<cr>", desc = "Toggle git blame for current file", noremap = true},
-    ["<leader>gC"] = {":Gclog %<cr>", desc = "Toggle commits for current file", noremap = true }
+    ["<leader>gC"] = {":Git log --decorate %<cr>", desc = "Commits of current file", noremap = true },
+    ["<leader>gc"] = {":Git log --decorate<cr>", desc = "Commits of the repository", noremap = true },
   },
   t = {
     ["<Esc><Esc>"] = { "<C-\\><C-N><cr>", noremap = true },
