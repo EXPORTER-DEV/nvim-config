@@ -18,7 +18,7 @@ return {
   },
 
   -- Set colorscheme to use
-  colorscheme = "astrodark",
+  colorscheme = "gruvbox",
 
   -- Diagnostics configuration (for vim.diagnostics.config({...})) when diagnostics are on
   diagnostics = {
@@ -33,7 +33,9 @@ return {
       format_on_save = {
         enabled = true, -- enable or disable format on save globally
         allow_filetypes = { -- enable format on save for specified filetypes only
-          -- "go",
+          "go",
+          "json",
+          "lua",
         },
         ignore_filetypes = { -- disable format on save for specified filetypes
           -- "python",
@@ -69,17 +71,73 @@ return {
   -- augroups/autocommands and custom filetypes also this just pure lua so
   -- anything that doesn't fit in the normal config locations above can go here
   polish = function()
-    -- Set up custom filetypes
-    -- vim.filetype.add {
-    --   extension = {
-    --     foo = "fooscript",
-    --   },
-    --   filename = {
-    --     ["Foofile"] = "fooscript",
-    --   },
-    --   pattern = {
-    --     ["~/%.config/foo/.*"] = "fooscript",
-    --   },
-    -- }
+    require("dap").adapters["pwa-node"] = {
+      type = "server",
+      host = "localhost",
+      port = "${port}",
+      executable = {
+        command = "node",
+        args = {"~/.config/nvim/vscode-js-debug/dist/src/dapDebugServer.js", "${port}"},
+      }
+    }
+
+    local javascriptConfigurations = {
+      {
+        type = "pwa-node",
+        request = "attach",
+        name = "Attach to 9229",
+        port = 9229,
+        restart = true,
+        attachExistingChildren = true,
+        autoAttachChildProcesses = true,
+        continueOnAttach = true,
+      },
+      {
+        type = "pwa-node",
+        request = "attach",
+        name = "Attach to 9230",
+        port = 9230,
+        restart = true,
+        attachExistingChildren = true,
+        autoAttachChildProcesses = true,
+        continueOnAttach = true,
+      },
+    }
+
+    require("dap").configurations.javascript = javascriptConfigurations;
+    require("dap").configurations.typescript = javascriptConfigurations;
+
+    -- Need following hack to prevent vim heap usage to not increase extreemly high when enter JSON oneline buffer >= 1MB
+    vim.cmd([[
+      function! g:FckThatMatchParen ()
+        if exists(":NoMatchParen")
+          :NoMatchParen
+        endif
+      endfunction
+      autocmd BufWinEnter * if line2byte(line("$") + 1) > 1000000 | syntax clear | call FckThatMatchParen() | set noshowmatch | endif
+      set synmaxcol=128
+      set autoread
+    ]])
+
+    require('gitsigns').setup {
+      current_line_blame = true,
+      on_attach = function(bufnr)
+        -- local function map(mode, lhs, rhs, opts)
+        --     opts = vim.tbl_extend('force', {noremap = true, silent = true}, opts or {})
+        --     vim.api.nvim_buf_set_keymap(bufnr, mode, lhs, rhs, opts)
+        -- end
+      end
+    }
+
+    local Terminal = require('toggleterm.terminal').Terminal
+    local NodeInspectTerminal = Terminal:new({display_name="Node debug injected", size=80, direction='horizontal', env={NODE_OPTIONS='--inspect-brk'}})
+
+    function ToggleNodeInspectTerminal()
+      NodeInspectTerminal:toggle()
+    end
+
+    vim.api.nvim_set_keymap("n", "<leader>td", "<cmd>lua ToggleNodeInspectTerminal()<cr>", { desc = "ToggleTerm with Node debug injected" })
+
+    require("nvim-dap-virtual-text").setup({})
   end,
 }

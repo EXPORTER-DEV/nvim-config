@@ -17,8 +17,6 @@ return {
     --   function() require("astronvim.utils.buffer").nav(-(vim.v.count > 0 and vim.v.count or 1)) end,
     --   desc = "Previous buffer",
     -- },
-
-    -- mappings seen under group name "Buffer"
     ["<leader>bD"] = {
       function()
         require("astronvim.utils.status").heirline.buffer_picker(
@@ -27,13 +25,34 @@ return {
       end,
       desc = "Pick to close",
     },
-    -- tables with the `name` key will be registered with which-key if it's installed
-    -- this is useful for naming menus
     ["<leader>b"] = { name = "Buffers" },
-    -- quick save
-    -- ["<C-s>"] = { ":w!<cr>", desc = "Save File" },  -- change description but the same command
+    ["<leader>bu"] = { ":u1|u<cr>", desc = "Undo all changes in current buffer" },
+    ["<C-d>"] = { "caw<cr>", desc = "Delete current word under cursor and put insert mode"},
+    ["<C-s>"] = { ":w!<cr>", desc = "Save File" },
+    ["<leader>r"] = { name = "Remove current file" },
+    ["<leader>rr"] = { function()
+      vim.fn.delete(vim.fn.expand('%'))
+    end, desc = "Just remove current file"},
+    ["<leader>rf"] = { function()
+      vim.fn.delete(vim.fn.expand('%'))
+      vim.cmd("bdelete!")
+    end, desc = "Remove current file and close buffer"},
+    ["fj"] = { ":%!jq .<cr>", desc = "Format JSON to readable"},
+    ["<leader>fg"] = { ":lua require('telescope').extensions.live_grep_args.live_grep_args()<CR>", desc = "Enter live grep with args mode" },
+    ["<Tab>"] = { ":bnext<cr>", desc = "Go to next buffer tab" },
+    ["<S-Tab>"] = { ":bprev<cr>", desc = "Go to prev buffer tab" },
+    ["<leader>s"] = { name = "Scratches" },
+    ["<leader>so"] = { ":ScratchOpen<cr>", desc = "Open list of scratches" },
+    ["<leader>sc"] = { ":Scratch<cr>", desc = "Create new scratch" },
+    ["<leader>sn"] = { ":ScratchWithName<cr>", desc = "Create new scratch with name" },
+    ["<leader>gm"] = { name = "Merge tools" },
+    ["<leader>gmo"] = { ":DiffviewOpen<cr>", desc = "Open diff view" },
+    ["<leader>gmc"] = { ":DiffviewClose<cr>", desc = "Close diff view" },
+    ["<leader>gl"] = {":Git blame<cr>", desc = "Toggle git blame for current file", noremap = true},
+    ["<leader>gC"] = {":Gclog %<cr>", desc = "Toggle commits for current file", noremap = true }
   },
   t = {
+    ["<Esc><Esc>"] = { "<C-\\><C-N><cr>", noremap = true },
     -- setting a mapping to false will disable it
     -- ["<esc>"] = false,
   },
