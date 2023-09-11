@@ -77,7 +77,8 @@ return {
       port = "${port}",
       executable = {
         command = "node",
-        args = {"~/.config/nvim/vscode-js-debug/dist/src/dapDebugServer.js", "${port}"},
+        -- Should change below path to your absolute path to vscode-js-debug repo:
+        args = {"/Users/vadimvaulin/.config/nvim/vscode-js-debug/dist/src/dapDebugServer.js", "${port}"},
       }
     }
 
